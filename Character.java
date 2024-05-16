@@ -1,7 +1,8 @@
-public class Character {
+public abstract class Character {
     protected int HP, MP, level;
     protected String race;
     protected Weapon weapon;
+    protected Status status;
 
     public Character(String race, int level) {
         int HPMPPerLevel = 10;
@@ -9,6 +10,7 @@ public class Character {
         this.level = level;
         this.HP = HPMPPerLevel * level;
         this.MP = HPMPPerLevel * level;
+        this.status = new Status();
     }
 
     public int getHP() {
@@ -26,7 +28,11 @@ public class Character {
     public String getRace() {
         return race;
     }
-    
+
+    public Status getStatus() {
+        return status;
+    }
+
     public void setHP(int HP) {
         this.HP = HP;
     }
@@ -44,7 +50,11 @@ public class Character {
     }
 
     public void useWeapon(Weapon weapon) {
-        this.weapon = weapon;
+        if (validWeapon(weapon)) {
+            this.weapon = weapon;
+        } else {
+            System.out.println( "Invalid weapon" );
+        }
     }
 
     public void useItem(Item item) {
@@ -62,6 +72,33 @@ public class Character {
             default:
                 break;
         }
+    }
+
+    public abstract void doAttack(Character target);
+
+    public abstract void doSkill(Character target);
+
+    public abstract boolean isHero();
+
+    public abstract boolean validWeapon(Weapon weapon);
+
+    public void takeDamage(int damage) {
+        if (status.isWeak()) {
+            damage *= 2;
+        }
+        HP -= damage;
+    }
+
+    public void heal(int heal) {
+        HP += heal;
+    }
+
+    public void recover(int recover) {
+        MP += recover;
+    }
+
+    public void info() {
+        System.out.println("Race: " + getRace() + "\nLevel: " + getLevel() + "\nHP: " + getHP() + "\nMP: " + getMP() + "\nStatus: " + getStatus().showStatus() + "\n");
     }
 
     protected int totalDamage() {
